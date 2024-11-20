@@ -43,4 +43,9 @@
 			"compatibility": {}
 		}
 	]
-}}
+  }
+	"url": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout",
+	"download": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout/archive/refs/tags/V1.0.0.zip",
+  	"manifest": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout/releases/download/V1.0.0/module.json",
+ 	"readme": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout/blob/main/README.md",
+}
