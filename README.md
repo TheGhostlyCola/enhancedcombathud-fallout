@@ -1,7 +1,7 @@
 # ARGON-Fallout
 An implementation of the [Argon - Combat HUD](https://foundryvtt.com/packages/enhancedcombathud) (by [TheRipper93][TheGhostlyCola](https://github.com/TheGhostlyCola)) for the [Fallout](https://github.com/Muttley/foundryvtt-fallout) system. The Argon Combat HUD (CORE) module is required for this module to work.
 
-![U0shrCV](https://github.com/Saibot393/enhancedcombathud-t2k4e/assets/137942782/dadd189c-87aa-4046-894c-8be1c45fbc0d)
+![U0shrCV]([(https://imgur.com/a/3FCFnJV)])
 
 <sup>All icon included in this project are from [Game-icons.net](game-icons.net), used under the [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) license</sup>
 
