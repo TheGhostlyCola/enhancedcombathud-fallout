@@ -1,0 +1,46 @@
+{
+  "id": "enhancedcombathud-fallout",
+  "title": "Argon - Combat HUD (FALLOUT)",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "12"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "fallout",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  },
+  "authors": [
+    {
+      "name": "Me",
+      "flags": {}
+    }
+  ],
+  "styles": [
+    "styles/coriolisCustom.css"
+  ],
+  "esmodules": [
+	"scripts/settings.js",
+	"scripts/falloutui.js"
+  ],
+  "relationships": {
+	"requires": [
+		{
+			"id": "enhancedcombathud",
+			"type": "module",
+			"compatibility": {}
+		}
+	],
+	"systems": [
+		{
+			"id": "fallout",
+			"type": "system",
+			"compatibility": {}
+		}
+	]
+}}
