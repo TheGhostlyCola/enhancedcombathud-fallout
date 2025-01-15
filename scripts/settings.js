@@ -54,5 +54,14 @@ Hooks.once("init", () => {
         type: Boolean,
         default: true,
         requiresReload: true
-    })      
+    }) 
+    game.settings.register(ModuleName, "Targeting", {
+      name: "Targeting",
+        hint: "Requires a target to be selected when attacking.(Bugged)",
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: true,
+        requiresReload: true
+    })         
 });
