@@ -945,12 +945,15 @@ get hasTooltip() {
 }
 
 get targets() {
+    if (!game.settings.get(ModuleName, "Targeting")) {
+    } else {
     switch (this.item?.type){
         case "weapon":
             return 1;
         default:
             return 0;      
         
+        }
     }
 }
 get ranges(){
@@ -1222,10 +1225,11 @@ fallout.Dialog2d20.createDialog({
     }
 });
 
-if(this.item.system.weaponType == "unarmed"){
-    diceNum = this.item.system.damage.rating + this.actor.system.meleeDamage.value;
+if(this.item.system.weaponType == "unarmed" && this.actor.type !== "creature"){
+    console.log(this.actor.creatureType),
+    diceNum = this.item.system.damage.rating + this.actor.system.meleeDamage.value,
     console.log(diceNum)
-} else if(this.item.system.weaponType == "melee"){
+} else if(this.item.system.weaponType == "meleeWeapons" && this.actor.type !== "creature"){
     diceNum = this.item.system.damage.rating + this.actor.system.meleeDamage.value,
     console.log(diceNum)
 } else diceNum = this.item.system.damage.rating;
