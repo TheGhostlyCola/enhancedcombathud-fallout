@@ -987,7 +987,22 @@ async _onLeftClick(event, special = "") {
     if (!game.settings.get(ModuleName, "Injuries")) {
     
     } else {
+    if(this.item.weaponType != "melee" & this.item.weaponType != "unarmed"){
+           const wepammo = this.item.system.ammo
+           let invammo = this.actor.items.filter((item) => ["ammo"].includes(item.type));
 
+            const matchingAmmo = this.actor.items.find(item =>
+            item.type === "ammo" &&
+            item.name.toLowerCase().includes(wepammo.toLowerCase()) &&
+            item.system.quantity > 0
+            );
+            if (!matchingAmmo) {
+            ui.notifications.warn(`No ${wepammo} ammo.`);
+            return; // End script early
+            }
+
+
+        }
 const bodyParts = actor.system.body_parts;
 const hasHeadInjury = bodyParts.head?.injuries.includes(2);
 
@@ -1029,7 +1044,6 @@ if (hasHeadInjury) {
 
     if (this.item.type == "weapon") {
         used = true;
-        
     };
     if (this.item.type == "consumable") {
         this.actor.consumeItem(this.item);
@@ -1073,14 +1087,14 @@ if (hasHeadInjury) {
                         attributeValue = actor.system?.attributes?.int?.value ?? 0;
                         skillSkill = actor.items.find(i => i.name.toLowerCase() === "medicine" && i.type === "skill");
                         skillValue = skillSkill?.system?.value ?? 0;
-                        skillTag = skillSkill?.system?.tag
+                        skillTag = skillSkill?.system?.tag;
                         rollName = "First Aid - Medicine"
                         break; 
                     case "First Aid - Repair": 
                         attributeValue = actor.system?.attributes?.int?.value ?? 0;
                         skillSkill = actor.items.find(i => i.name.toLowerCase() === "repair" && i.type === "skill");
                         skillValue = skillSkill?.system?.value ?? 0;
-                        skillTag = skillSkill?.system?.tag
+                        skillTag = skillSkill?.system?.tag;
                         console.log(skillSkill)
                         rollName = "First Aid - Repair"
                         break; 
@@ -1123,6 +1137,7 @@ if (hasHeadInjury) {
                 diceNum,
                 attribute: attributeValue|| 0,
                 skill: skillValue|| 0, 
+                tag,
                 rollLocation,
                 actor,
                 item
