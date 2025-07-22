@@ -1,7 +1,7 @@
 {
   "id": "enhancedcombathud-fallout",
   "title": "Argon - Combat HUD (FALLOUT)",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
@@ -38,7 +38,7 @@
  
   
 	"url": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout",
-	"download": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout/releases/tag/v1.0.2",
-  	"manifest": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout/releases/download/v1.0.2/module.json",
+	"download": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout/releases/tag/V1.0.3",
+  "manifest": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout/releases/latest/download/module.json",
  	"readme": "https://github.com/TheGhostlyCola/enhancedcombathud-fallout/blob/main/README.md"
 }
