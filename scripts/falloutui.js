@@ -987,7 +987,8 @@ async _onLeftClick(event, special = "") {
     if (!game.settings.get(ModuleName, "Injuries")) {
     
     } else {
-    if(this.item.weaponType != "melee" & this.item.weaponType != "unarmed"){
+    if(this.item.system.weaponType != "meleeWeapons" && this.item.system.weaponType != "unarmed"){
+            console.log(this.item.system.weaponType)
            const wepammo = this.item.system.ammo
            let invammo = this.actor.items.filter((item) => ["ammo"].includes(item.type));
 
