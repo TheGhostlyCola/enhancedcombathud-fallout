@@ -987,61 +987,59 @@ async _onLeftClick(event, special = "") {
     if (!game.settings.get(ModuleName, "Injuries")) {
     
     } else {
-    if(this.item.system.weaponType != "meleeWeapons" && this.item.system.weaponType != "unarmed"){
+        if(this.item.type === "weapon" && !["meleeWeapons","unarmed"].includes(this.item.system.weaponType)){
             console.log(this.item.system.weaponType)
-           const wepammo = this.item.system.ammo
-           let invammo = this.actor.items.filter((item) => ["ammo"].includes(item.type));
+            const wepammo = this.item.system.ammo
+            let invammo = this.actor.items.filter((item) => ["ammo"].includes(item.type));
 
             const matchingAmmo = this.actor.items.find(item =>
-            item.type === "ammo" &&
-            item.name.toLowerCase().includes(wepammo.toLowerCase()) &&
-            item.system.quantity > 0
+                item.type === "ammo" &&
+                item.name.toLowerCase().includes(wepammo.toLowerCase()) &&
+                item.system.quantity > 0
             );
             if (!matchingAmmo) {
-            ui.notifications.warn(`No ${wepammo} ammo.`);
-            return; // End script early
+                ui.notifications.warn(`No ${wepammo} ammo.`);
+                return; // End script early
             }
-
-
         }
-const bodyParts = actor.system.body_parts;
-const hasHeadInjury = bodyParts.head?.injuries.includes(2);
+    const bodyParts = actor.system.body_parts;
+    const hasHeadInjury = bodyParts.head?.injuries.includes(2);
 
 
-if (hasHeadInjury && (apCostItems.includes(item.name) || weaponTypes.includes(item.type))) {
-  
-    const adjustmentValue = -2;
+    if (hasHeadInjury && (apCostItems.includes(item.name) || weaponTypes.includes(item.type))) {
+    
+        const adjustmentValue = -2;
 
-    const apAdjusted = await adjustPartyAP(adjustmentValue);
-    if (!apAdjusted) {
-        console.log("Not enough AP. Action canceled.");
-        return; 
+        const apAdjusted = await adjustPartyAP(adjustmentValue);
+        if (!apAdjusted) {
+            console.log("Not enough AP. Action canceled.");
+            return; 
+        }
+
+    
+        ChatMessage.create({
+            user: game.user.id,
+            speaker: ChatMessage.getSpeaker({ actor }),
+            content: `<strong>${actor.name}:</strong> Spends 2 AP to perform the action: <em>${item.name}</em> due to a head injury.`,
+            style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+        });
+
+        used = true;
     }
 
-  
-    ChatMessage.create({
-        user: game.user.id,
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<strong>${actor.name}:</strong> Spends 2 AP to perform the action: <em>${item.name}</em> due to a head injury.`,
-        style: CONST.CHAT_MESSAGE_STYLES.OTHER,
-    });
 
-    used = true;
-}
+    if (hasHeadInjury) {
+        ui.notifications.warn(`${actor.name}'s difficulty for ${item.name} is increased due to a head injury.`);
+        ChatMessage.create({
+            user: game.user.id,
+            speaker: ChatMessage.getSpeaker({ actor }),
+            content: `<strong>${actor.name}:</strong> The difficulty of <em>${item.name}</em> is increased due to a head injury.`,
+            style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+        });
 
-
-if (hasHeadInjury) {
-    ui.notifications.warn(`${actor.name}'s difficulty for ${item.name} is increased due to a head injury.`);
-    ChatMessage.create({
-        user: game.user.id,
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<strong>${actor.name}:</strong> The difficulty of <em>${item.name}</em> is increased due to a head injury.`,
-        style: CONST.CHAT_MESSAGE_STYLES.OTHER,
-    });
-
-    console.log(`Head injury affects action: ${item.name}.`);
+        console.log(`Head injury affects action: ${item.name}.`);
+        }
     }
-}
 
     if (this.item.type == "weapon") {
         used = true;
@@ -1057,7 +1055,6 @@ if (hasHeadInjury) {
             "Buy 2d20s": -3,
             "Buy 3d20s": -6,
         };
-    
        
         if (buySkillAPCosts[this.item.name]) {
             const apCost = buySkillAPCosts[this.item.name];
@@ -1069,7 +1066,6 @@ if (hasHeadInjury) {
                 console.log("Not enough AP. Action canceled.");
                 return; 
             }
-    
           
             await sendBuyAPChatCard(this.item.name, apCost);
     
@@ -1077,196 +1073,257 @@ if (hasHeadInjury) {
             return; 
         }
         console.log(this.item)
-                let actor = this.actor;
-                let attributeValue;
-                let skillSkill;
-                let skillValue;
-                let rollName;
-                let skillTag
-                switch(this.item.name) {
-                    case "First Aid - Medicine":
-                        attributeValue = actor.system?.attributes?.int?.value ?? 0;
-                        skillSkill = actor.items.find(i => i.name.toLowerCase() === "medicine" && i.type === "skill");
-                        skillValue = skillSkill?.system?.value ?? 0;
-                        skillTag = skillSkill?.system?.tag;
-                        rollName = "First Aid - Medicine"
-                        break; 
-                    case "First Aid - Repair": 
-                        attributeValue = actor.system?.attributes?.int?.value ?? 0;
-                        skillSkill = actor.items.find(i => i.name.toLowerCase() === "repair" && i.type === "skill");
-                        skillValue = skillSkill?.system?.value ?? 0;
-                        skillTag = skillSkill?.system?.tag;
-                        console.log(skillSkill)
-                        rollName = "First Aid - Repair"
-                        break; 
-                    case "Command Human":
-                        attributeValue = actor.system?.attributes?.cha?.value ?? 0;
-                        skillSkill = actor.items.find(i => i.name.toLowerCase() === "speech" && i.type === "skill");
-                        skillValue = skillSkill?.system?.value ?? 0;
-                        skillTag = skillSkill?.system?.tag
-                        console.log(skillSkill)
-                        rollName = "Command NPC"
-                        console.log(attributeValue)
-                        break; 
-                    case "Command Robot":
-                        attributeValue = actor.system?.attributes?.cha?.value ?? 0;
-                        skillSkill = actor.items.find(i => i.name.toLowerCase() === "science" && i.type === "skill");
-                        skillValue = skillSkill?.system?.value ?? 0;
-                        skillTag = skillSkill?.system?.tag
-                        console.log(skillSkill)
-                        rollName = "Command Robot"
-                        console.log(attributeValue)
-                        break;
-                     case "Command Animal":
-                        attributeValue = actor.system?.attributes?.cha?.value ?? 0;
-                        skillSkill = actor.items.find(i => i.name.toLowerCase() === "survival" && i.type === "skill");
-                        skillValue = skillSkill?.system?.value ?? 0;
-                        skillTag = skillSkill?.system?.tag
-                        console.log(skillSkill)
-                        rollName = "Command Animal"
-                        console.log(attributeValue)
-                        break;
-                    
-                }        
-                let diceNum = 2; 
-                let tag = skillTag|| false; 
-                 const complication = 20; 
-                 let item = this.item;
-            const rollLocation = false;
-            fallout.Dialog2d20.createDialog({
-                rollName,
-                diceNum,
-                attribute: attributeValue|| 0,
-                skill: skillValue|| 0, 
-                tag,
-                rollLocation,
-                actor,
-                item
-            }).then(result => {
-                if (result) {
-                    console.log("Roll result:", result);
-                } else {
-                    console.log("Dialog closed without rolling.");
-                }
-            });
+        let actor = this.actor;
+        let attributeValue;
+        let skillSkill;
+        let skillValue;
+        let rollName;
+        let skillTag
+        switch(this.item.name) {
+            case "First Aid - Medicine":
+                attributeValue = actor.system?.attributes?.int?.value ?? 0;
+                skillSkill = actor.items.find(i => i.name.toLowerCase() === "medicine" && i.type === "skill");
+                skillValue = skillSkill?.system?.value ?? 0;
+                skillTag = skillSkill?.system?.tag;
+                rollName = "First Aid - Medicine"
+                break; 
+            case "First Aid - Repair": 
+                attributeValue = actor.system?.attributes?.int?.value ?? 0;
+                skillSkill = actor.items.find(i => i.name.toLowerCase() === "repair" && i.type === "skill");
+                skillValue = skillSkill?.system?.value ?? 0;
+                skillTag = skillSkill?.system?.tag;
+                console.log(skillSkill)
+                rollName = "First Aid - Repair"
+                break; 
+            case "Command Human":
+                attributeValue = actor.system?.attributes?.cha?.value ?? 0;
+                skillSkill = actor.items.find(i => i.name.toLowerCase() === "speech" && i.type === "skill");
+                skillValue = skillSkill?.system?.value ?? 0;
+                skillTag = skillSkill?.system?.tag
+                console.log(skillSkill)
+                rollName = "Command NPC"
+                console.log(attributeValue)
+                break; 
+            case "Command Robot":
+                attributeValue = actor.system?.attributes?.cha?.value ?? 0;
+                skillSkill = actor.items.find(i => i.name.toLowerCase() === "science" && i.type === "skill");
+                skillValue = skillSkill?.system?.value ?? 0;
+                skillTag = skillSkill?.system?.tag
+                console.log(skillSkill)
+                rollName = "Command Robot"
+                console.log(attributeValue)
+                break;
+                case "Command Animal":
+                attributeValue = actor.system?.attributes?.cha?.value ?? 0;
+                skillSkill = actor.items.find(i => i.name.toLowerCase() === "survival" && i.type === "skill");
+                skillValue = skillSkill?.system?.value ?? 0;
+                skillTag = skillSkill?.system?.tag
+                console.log(skillSkill)
+                rollName = "Command Animal"
+                console.log(attributeValue)
+                break;
+            
+        }        
+        let diceNum = 2; 
+        let tag = skillTag|| false; 
+        const complication = 20; 
+        let item = this.item;
+        const rollLocation = false;
+        fallout.Dialog2d20.createDialog({
+            rollName,
+            diceNum,
+            attribute: attributeValue|| 0,
+            skill: skillValue|| 0, 
+            tag,
+            rollLocation,
+            actor,
+            item
+        }).then(result => {
+            if (result) {
+                console.log("Roll result:", result);
+            } else {
+                console.log("Dialog closed without rolling.");
+            }
+        });
     }
     
     if (used) {
        falloutItemButton.consumeActionEconomy(this.item);
     
-    const actor = this.actor; 
-    const item = this.item; 
-    let attribute;
-    let skill;
+        const actor = this.actor; 
+        const item = this.item; 
+        let attribute;
+        let skill;
 
-if (item.isOwnedByCreature) {
-    const creatureAttribute = item.system.creatureAttribute ?? "";
-    const creatureSkill = item.system.creatureSkill ?? "";
+        if (item.isOwnedByCreature) {
+            const creatureAttribute = item.system.creatureAttribute ?? "";
+            const creatureSkill = item.system.creatureSkill ?? "";
 
-    if (creatureSkill === "" || creatureAttribute === "") {
-        return ui.notifications.warn(
-            game.i18n.localize("FALLOUT.ERRORS.WeaponHasMissingCreatureConfiguration")
-        );
-    }
+            if (creatureSkill === "" || creatureAttribute === "") {
+                return ui.notifications.warn(
+                    game.i18n.localize("FALLOUT.ERRORS.WeaponHasMissingCreatureConfiguration")
+                );
+            }
 
-    attribute = actor.system[creatureAttribute];
-    skill = actor.system[creatureSkill];
-    skill.tag = true;
-    } else {
-    const skillName = item.system.weaponType === "custom"
-        ? item.system.skill ?? ""
-        : CONFIG.FALLOUT.WEAPON_SKILLS[item.system.weaponType];
+            attribute = actor.system[creatureAttribute];
+            skill = actor.system[creatureSkill];
+            skill.tag = true;
+            } else {
+            const skillName = item.system.weaponType === "custom"
+                ? item.system.skill ?? ""
+                : CONFIG.FALLOUT.WEAPON_SKILLS[item.system.weaponType];
 
-    const customAttribute = item.system.weaponType === "custom"
-        ? item.system.attribute ?? ""
-        : false;
+            const customAttribute = item.system.weaponType === "custom"
+                ? item.system.attribute ?? ""
+                : false;
 
-    if (skillName === "") {
-        return ui.notifications.error(
-            game.i18n.localize("FALLOUT.ERRORS.UnableToDetermineWeaponSkill")
-        );
-    }
+            if (skillName === "") {
+                return ui.notifications.error(
+                    game.i18n.localize("FALLOUT.ERRORS.UnableToDetermineWeaponSkill")
+                );
+            }
 
-    const skillItem = actor.items.find(i => i.name === skillName);
+            const skillItem = actor.items.find(i => i.name === skillName);
 
-    if (skillItem) {
-        skill = skillItem.system;
-    } else {
-        skill = { value: 0, tag: false, defaultAttribute: "str" };
-    }
+            if (skillItem) {
+                skill = skillItem.system;
+            } else {
+                skill = { value: 0, tag: false, defaultAttribute: "str" };
+            }
 
-    const attributeOverride = CONFIG.FALLOUT.WEAPON_ATTRIBUTE_OVERRIDE[item.system.weaponType];
+            const attributeOverride = CONFIG.FALLOUT.WEAPON_ATTRIBUTE_OVERRIDE[item.system.weaponType];
 
-    if (customAttribute) {
-        attribute = actor.system.attributes[customAttribute];
-    } else if (attributeOverride) {
-        attribute = actor.system.attributes[attributeOverride];
-    } else {
-        attribute = actor.system.attributes[skill.defaultAttribute];
-    }
+            if (customAttribute) {
+                attribute = actor.system.attributes[customAttribute];
+            } else if (attributeOverride) {
+                attribute = actor.system.attributes[attributeOverride];
+            } else {
+                attribute = actor.system.attributes[skill.defaultAttribute];
+            }
 
-    if (!attribute) {
-        return ui.notifications.error(
-            game.i18n.localize("FALLOUT.ERRORS.UnableToDetermineWeaponAttribute")
-        );
-    }
-}
+            if (!attribute) {
+                return ui.notifications.error(
+                    game.i18n.localize("FALLOUT.ERRORS.UnableToDetermineWeaponAttribute")
+                );
+            }
+        }
 
-console.log("Attribute used for roll:", attribute);
-console.log("Skill used for roll:", skill);
-     
+        console.log("Attribute used for roll:", attribute);
+        console.log("Skill used for roll:", skill);
 
-const rollName = this.item.name;
-let diceNum = 2; 
-const tag = skill.tag || false; 
-const complication = 20; 
-const rollLocation = true; 
+        const rollName = this.item.name;
+        let diceNum = 2; 
+        const tag = skill.tag || false; 
+        const complication = 20; 
+        const rollLocation = true; 
 
+        // Compatibility check for the update
+        const isV13OrLater = !isNaN(parseInt(game.version)) && parseInt(game.version) >= 13;
+        // This makes the system ready to drop the Roll Damage button into the chat card. This way the player can click that, instead of just having the dialog appear erroneously.
+        if (isV13OrLater) {
 
-fallout.Dialog2d20.createDialog({
-    rollName,
-    diceNum,
-    attribute: attribute?.value || 0, 
-    skill: skill?.value || 0, 
-    tag,
-    complication,
-    rollLocation,
-    actor,
-    item
-}).then(result => {
-    if (result) {
-        console.log("Roll result:", result);
-    } else {
-        console.log("Dialog closed without rolling.");
-    }
-});
+            Hooks.once("renderChatMessageHTML", (message, html) => {
+                if (!message.content.includes(rollName) || message.speaker?.actor !== actor.id) return;
+                
+                const rerollButton = html.querySelector(".reroll-button");
+                if (!rerollButton) return;
+                // Create a flexrow container
+                const buttonRow = document.createElement("div");
+                buttonRow.className = "flexrow";
 
-if(this.item.system.weaponType == "unarmed" && this.actor.type !== "creature"){
-    console.log(this.actor.creatureType),
-    diceNum = this.item.system.damage.rating + this.actor.system.meleeDamage.value,
-    console.log(diceNum)
-} else if(this.item.system.weaponType == "meleeWeapons" && this.actor.type !== "creature"){
-    diceNum = this.item.system.damage.rating + this.actor.system.meleeDamage.value,
-    console.log(diceNum)
-} else diceNum = this.item.system.damage.rating;
-console.log(diceNum)
+                // Clone the reroll button and add it to the flexrow
+                const rerollClone = rerollButton.cloneNode(true);
+                buttonRow.appendChild(rerollClone);
+                        
+                const damageButton = document.createElement("button");
+                damageButton.className = "dialog-d6-button";
+                damageButton.textContent = 'Roll Damage';
+                
+                damageButton.addEventListener("click", async () => {
+                    if (["unarmed","meleeWeapons"].includes(item.system.weaponType) && actor.type !== "creature") {
+                        diceNum = item.system.damage.rating + actor.system.meleeDamage.value;
+                    } else {
+                        diceNum = item.system.damage.rating;
+                    }
+                
+                    const falloutRoll = null;
+                    await fallout.DialogD6.createDialog({
+                        rollName,
+                        diceNum,
+                        falloutRoll,
+                        actor: `Actor.${actor.id}`,
+                        weapon: item,
+                    }).then(d6Result => {
+                        if (d6Result) {
+                            console.log("Damage roll result:", d6Result);
+                        } else {
+                            console.log("Dialog closed without rolling.");
+                        }
+                    });
+                });
+                // Add the damage button to the flexrow
+                buttonRow.appendChild(damageButton);
+            
+                // Replace the original reroll button with the flexrow
 
-
-console.log(this.item.system.damage.rating,this.item.system.damage,this.item.system);
-const falloutRoll = null;
-const weapon = this.item;
-fallout.DialogD6.createDialog({
-    rollName,
-	diceNum,
-	falloutRoll,
-	weapon,
-}).then(result => {
-    if (result) {
-        console.log("Roll result:", result);
-    } else {
-        console.log("Dialog closed without rolling.");
-    }
-});
+                rerollButton.replaceWith(buttonRow);
+            });
+        } else {
+          Hooks.once("renderChatMessage", (message, $html, data) => {
+            // v12 logic using jQuery
+            const $rerollButton = $html.find(".reroll-button");
+            if ($rerollButton.length === 0) return;
+        
+            const $buttonRow = $(`<div class="flexrow"></div>`);
+            const $rerollClone = $rerollButton.clone();
+            $buttonRow.append($rerollClone);
+        
+            const $damageButton = $(`<button class="dialog-d6-button">Roll Damage</button>`);
+            $damageButton.on("click", async () => {
+                if (["unarmed","meleeWeapons"].includes(item.system.weaponType) && actor.type !== "creature") {
+                    diceNum = item.system.damage.rating + actor.system.meleeDamage.value;
+                } else {
+                    diceNum = item.system.damage.rating;
+                }
+            
+                const falloutRoll = null;
+                await fallout.DialogD6.createDialog({
+                    rollName,
+                    diceNum,
+                    falloutRoll,
+                    actor: `Actor.${actor.id}`,
+                    weapon: item,
+                }).then(d6Result => {
+                    if (d6Result) {
+                        console.log("Damage roll result:", d6Result);
+                    } else {
+                        console.log("Dialog closed without rolling.");
+                    }
+                });
+            });
+        
+            $buttonRow.append($damageButton);
+            $rerollButton.replaceWith($buttonRow);
+          });
+        }
+        
+            
+        const d20Result = fallout.Dialog2d20.createDialog({
+            rollName,
+            diceNum,
+            attribute: attribute?.value || 0, 
+            skill: skill?.value || 0, 
+            tag,
+            complication,
+            rollLocation,
+            actor,
+            item
+        });
+        if (d20Result) {
+            console.log("Roll result:", d20Result);
+        } else {
+            console.log("Dialog closed without rolling.");
+        }
     }
 }
 
@@ -1879,4 +1936,5 @@ class falloutWeaponSets extends ARGON.WeaponSets {
 	CoreHUD.defineMovementHud(null);
 	CoreHUD.defineWeaponSets(falloutWeaponSets);
 	CoreHUD.defineSupportedActorTypes(["character", "npc","robot","creature"]);
+
 });
